@@ -397,6 +397,7 @@ module.exports = function (grunt) {
                     response += chunk;
                 });
                 res.on('end', function () {
+                    grunt.log.writeln('WEBSTORE RESPONSE: ' + response);
                     var obj = JSON.parse(response);
                     if( obj.uploadState !== "SUCCESS" ) {
                         // console.log('Error while uploading ZIP', obj);
