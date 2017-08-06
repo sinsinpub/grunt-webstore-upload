@@ -397,7 +397,7 @@ module.exports = function (grunt) {
                     response += chunk;
                 });
                 res.on('end', function () {
-                    grunt.log.writeln('WEBSTORE RESPONSE: ' + response);
+                    grunt.log.writeln('WEBSTORE RESPONSE (upload): ' + response);
                     var obj = JSON.parse(response);
                     if( obj.uploadState !== "SUCCESS" ) {
                         // console.log('Error while uploading ZIP', obj);
@@ -457,6 +457,7 @@ module.exports = function (grunt) {
             readStream = fs.createReadStream(filePath);
 
             readStream.on('end', function(){
+                grunt.log.writeln('Done reading file from machine');
                 req.end();
             });
 
@@ -492,6 +493,7 @@ module.exports = function (grunt) {
                 response += chunk;
             });
             res.on('end', function () {
+                grunt.log.writeln('WEBSTORE RESPONSE (publish): ' + response);
                 var obj = JSON.parse(response);
                 if( obj.error ){
                     console.log('Error while publishing ('+ options.name +'). Please check configuration at Developer Dashboard', obj);
