@@ -385,7 +385,7 @@ module.exports = function (grunt) {
             var req = https.request({
                 method: 'PUT',
                 host: 'www.googleapis.com',
-                path: util.format('/upload/chromewebstore/v1.1/items/%s', options.appID),
+                path: util.format('/upload/chromewebstore/v1.1/items/%s', options.appID) + '?uploadType=media',
                 headers: {
                     'Authorization': 'Bearer ' + options.account.token,
                     'x-goog-api-version': '2'
