@@ -466,7 +466,7 @@ module.exports = function (grunt) {
             var req = https.request({
                 method: "PUT",
                 host: "www.googleapis.com",
-                path: util.format("/upload/chromewebstore/v1.1/items/%s", extensionConfig.appID),
+                path: util.format("/upload/chromewebstore/v1.1/items/%s", extensionConfig.appID) + "?uploadType=media",
                 headers: {
                     "Authorization": "Bearer " + extensionConfig.account.token,
                     "x-goog-api-version": "2"
@@ -494,6 +494,7 @@ module.exports = function (grunt) {
             readStream = fs.createReadStream(zip);
 
             readStream.on("end", function(){
+                grunt.log.writeln("ZIP file has been read");
                 req.end();
             });
 
@@ -562,6 +563,7 @@ module.exports = function (grunt) {
                         }));
                     },
                     onEnd: function(response){
+                        grunt.log.writeln("WEBSTORE RESPONSE (upload): " + response);
                         var obj = JSON.parse(response);
                         if( obj.uploadState !== "SUCCESS" ) {
                             // console.log('Error while uploading ZIP', obj);
@@ -726,6 +728,7 @@ module.exports = function (grunt) {
                     response += chunk;
                 });
                 res.on("end", function () {
+                    grunt.log.writeln('WEBSTORE RESPONSE (publish): ' + response);
                     var obj = JSON.parse(response);
                     if(obj.error){
                         grunt.log.writeln("Error: during access token request");
