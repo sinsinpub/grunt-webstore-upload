@@ -585,14 +585,23 @@ module.exports = function (grunt) {
                             grunt.log.error(errorMessage);
                             grunt.log.writeln(" ");
 
-                            d.resolve(new BadUploadResult({
-                                fileName        : zip,
-                                extensionName   : options.name,
-                                extensionId     : options.appID,
-                                published       : false,
-                                errorMsg        : errorMessage,
-                                errors          : obj
-                            }));
+                            if( obj.uploadState === "IN_PROGRESS" ) {
+                                d.resolve(new GoodUploadResult({
+                                    fileName        : zip,
+                                    extensionName   : options.name,
+                                    extensionId     : options.appID,
+                                    published       : false
+                                }));
+                            } else {
+                                d.resolve(new BadUploadResult({
+                                    fileName        : zip,
+                                    extensionName   : options.name,
+                                    extensionId     : options.appID,
+                                    published       : false,
+                                    errorMsg        : errorMessage,
+                                    errors          : obj
+                                }));
+                            }
                         }else{
                             grunt.log.writeln(" ");
                             grunt.log.writeln(`Uploading done ( ${options.name} )` );
