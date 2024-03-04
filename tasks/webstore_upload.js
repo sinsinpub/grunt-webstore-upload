@@ -399,7 +399,7 @@ module.exports = function (grunt) {
                 res.on('end', function () {
                     grunt.log.writeln('WEBSTORE RESPONSE (upload): ' + response);
                     var obj = JSON.parse(response);
-                    if( obj.uploadState !== "SUCCESS" ) {
+                    if( obj.uploadState !== "SUCCESS" && obj.uploadState !== "IN_PROGRESS" ) {
                         // console.log('Error while uploading ZIP', obj);
                         grunt.log.writeln(' ');
 
@@ -423,17 +423,25 @@ module.exports = function (grunt) {
                         grunt.log.writeln('Uploading done ('+ options.name +')' );
                         grunt.log.writeln(' ');
                         if( doPublish ){
-                            publishItem( options ).then(function (response) {
-                                var appInfo = {
-                                    fileName        : zip,
-                                    extensionName   : options.name,
-                                    extensionId     : options.appID,
-                                    published       : true,
-                                    response        : response
-                                };
-                                onExtensionPublished(appInfo);
-                                d.resolve(appInfo);
-                            });
+                            function doPublishItem() {
+                                publishItem( options ).then(function (response) {
+                                    var appInfo = {
+                                        fileName        : zip,
+                                        extensionName   : options.name,
+                                        extensionId     : options.appID,
+                                        published       : true,
+                                        response        : response
+                                    };
+                                    onExtensionPublished(appInfo);
+                                    d.resolve(appInfo);
+                                });
+                            }
+                            if ( obj.uploadState === "IN_PROGRESS" ) {
+                                grunt.log.writeln('Waiting a minute for uploading...');
+                                setTimeout(doPublishItem, 60000);
+                            } else {
+                                doPublishItem();
+                            }
                         }else{
                             d.resolve({
                                 fileName        : zip,
